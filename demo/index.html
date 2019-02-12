@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html class="ocks-org do-not-copy">
+<meta charset="utf-8">
+<title>D3 + Leaflet</title>
+<style>
+
+@import url(//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.css);
+@import url(../style.css?aea6f0a);
+body{
+    background-color: ghostwhite;
+  }
+#map {
+  margin-left: -100px;
+  width: 40vw;
+  height: 40vw;
+  border: solid 2px black;
+}
+
+svg {
+  position: relative;
+}
+
+path {
+  /*fill: #fff;
+  fill-opacity: .1;*/
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+path:hover {
+  fill: cyan;
+  fill-opacity: .7;
+}
+#floater{
+  /*position: absolute;*/
+  top: 150px;
+  left:60vw;
+  width:30vw;
+}
+.vizwrap{
+  width: 100%;
+}
+.vhalf{
+ float:left;
+ width:40%;
+ margin-left: 75px;
+}
+.bb{
+/*  border: solid 2px black;
+*/  /*margin-left: 10px;*/
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 80%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+.inst{
+  font-size: 10px;
+  color:tomato;
+}
+</style>
+
+<header>
+  <link rel="stylesheet" href="tufte.css"/>
+  <!-- <aside>June 19, 2012</aside>
+  <a href="../" rel="author">Mike Bostock</a> -->
+</header>
+
+<h1 style="text-decoration: underline;color:darkslategrey;">Mapa de producción agrícola mexicana</h1>
+<p> El siguiente es un mapa interactivo de la república mexicana que muestra la producción agricola por producto a nivel municipal. Los datos fueron obtenidos a partir de la Encuesta Nacional Agropecuaria 2017. </p><p>Para su desarrollo se tomó en cuenta solo la categoría de producción total del municipio. El código del proyecto (Análisis de la encuesta y visualización) se encuentra en la siguiente liga:<a href="">Github Mapa</a></p><span class="inst">hacer click en el municipio para ver su producción</span>
+<div class="vizwrap">
+  <div class="vhalf">
+      <div id="mun_name">Municipio:</div>
+      <p id="map">
+
+      <p><!-- <aside><a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a></aside> -->
+  </div>
+  <div class="vhalf bb">
+    <br><br>
+       
+        <!-- <div id="mun_code">Código:</div>
+        <div id="state_code">Estado:</div> -->
+        <table id="viewer">
+          <tr>
+            <th>Producto</th>
+            <th>valor</th>
+            <th>Unidades</th>
+          </tr>
+          
+          
+        </table>
+
+  </div>
+    <div id="floater">
+     
+
+    </div>
+
+</div>
+<br>
+
+<footer>
+  
+  
+</footer>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.js"></script>
+<script src="g1.js"></script>
+<script>
+  var diccionarioP;
+$.getJSON("data.json", function(json) {
+  diccionarioP=json;
+    console.log(json); // this will show the info it in firebug console
+});
+
+
+var map = new L.Map("map", {center: [23.8, -106.9], zoom: 5})
+    .addLayer(new L.TileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"));
+
+var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+d3.json("mxgeo.json", function(error, collection) {
+  if (error) throw error;
+
+  var transform = d3.geo.transform({point: projectPoint}),
+      path = d3.geo.path().projection(transform);
+      console.log(collection.features);
+  var feature = g.selectAll("path")
+      .data(collection.features)
+    .enter().append("path").attr("class", function(d){ 
+      return  "miau"; 
+    }).attr("state_code", function(d){ 
+      return  d.properties.state_code;
+    }).attr("opacity",.5).attr("fill", function(d){ 
+      state=diccionarioP[d.properties.state_code];
+      mun=state[d.properties.mun_name]
+      if(mun){
+        return  "springgreen";
+      }
+      else{
+        return  "white";
+      }
+       
+    }).attr("mun_code", function(d){ 
+      return  d.properties.mun_code;
+    }).attr("mun_name", function(d){ 
+      return  d.properties.mun_name;
+    }).on("mouseover", handleMouseOver)
+    .on("click", handleclick)
+
+  map.on("viewreset", reset);
+  reset();
+
+  // Reposition the SVG to cover the features.
+  function reset() {
+    var bounds = path.bounds(collection),
+        topLeft = bounds[0],
+        bottomRight = bounds[1];
+
+    svg .attr("width", bottomRight[0] - topLeft[0])
+        .attr("height", bottomRight[1] - topLeft[1])
+        .style("left", topLeft[0] + "px")
+        .style("top", topLeft[1] + "px");
+
+    g   .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+    feature.attr("d", path);
+  }
+
+  // Use Leaflet to implement a D3 geometric transformation.
+  function projectPoint(x, y) {
+    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+    this.stream.point(point.x, point.y);
+  }
+});
+
+function handleclick(d, i) {
+  console.log(d.properties.state_code);
+  state=diccionarioP[d.properties.state_code];
+  mun=state[d.properties.mun_name]
+  $("#viewer").html("<h3>"+d.properties.mun_name+"</h3><tr>\
+            <th>Producto</th>\
+            <th>valor</th>\
+            <th>Unidades</th>\
+          </tr>");
+  for (var i = 0; i < mun.length; i++) {
+    $("#viewer").append('<tr>\
+            <td>'+mun[i].producto+'</td>\
+            <td>'+parseFloat(mun[i].valor)+'</td>\
+            <td>'+mun[i].desc+'</td>\
+          </tr>')
+    
+  }
+  console.log(d.properties.mun_name,mun)
+  // g.selectAll("path").attr("fill", function(d){ 
+  //     return  "orange"; 
+  //   });
+}
+function handleMouseOver(d, i) {  // Add interactivity
+    $("#mun_name").text("Municipio: "+d.properties.mun_name);
+    $("#mun_code").text("Código: "+d.properties.mun_code);
+    $("#state_code").text("Estado: "+d.properties.state_code);
+            // Use D3 to select element, change color and size
+            // d3.select(this).attr({
+            //   fill: "orange",
+            //   r: radius * 2
+            // });
+
+            // Specify where to put label of text
+            // svg.append("text").attr({
+            //    id: "t" + d.x + "-" + d.y + "-" + i,  // Create an id for text so we can select it later for removing on mouseout
+            //     x: function() { return xScale(d.x) - 30; },
+            //     y: function() { return yScale(d.y) - 15; }
+            // })
+            // .text(function() {
+            //   return [d.x, d.y];  // Value of the text
+            // });
+          }
+
+</script>
+<script>
+
+
+</script>
+<script async src="../highlight.min.js"></script>

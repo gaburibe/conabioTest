@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Análisis por enegrama</title>
+  <meta charset="utf-8">
+</head>
+<style type="text/css">
+  body{
+    background-color: #f3fff8;
+  }
+  img {
+    max-width: none !important;
+    /*height: 83px;*/
+    width:320px;
+   /* margin-left: -100px;*/
+  }
+  text:hover{
+    font-size: 17px !important;
+    cursor:none;
+    font-weight: bolder;
+  }
+
+</style>
+ <style>
+    body {font-family: monospace; line-height: 160%; font-size: 18px; margin: 0;}
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+    th, td {
+  padding: 1rem;
+  text-align: right;
+  border: 1px dotted #ccc;
+}
+td:first-child { 
+  
+        background-color: whitesmoke;
+    color: black !important;
+}
+td{
+  color:black !important;
+}
+    </style>
+<link rel="stylesheet" href="tufte.css"/>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+
+<body dcjnfaoifoefmnbhhlbppaebgnccfddf="1.2.9" style="zoom: 1;" >
+    <article>
+    	<img src="./logo.png">
+      <h1 id="tufte-css">Encuesta: méxico propone</h1>
+      <p class="subtitle"></p>
+
+      <section>
+          <p>Se realizaron enegramas de 2 y 3 sin stopwords sobre la encuesta para identificar los temas principales. Las preguntas:</p>
+          <ul>
+            <li>P1: ¿Cuál es tu principal preocupación respecto al uso de Internet de las ninas, ninos y adolescentes de tu familia?;;</li>
+            <li>P2: ¿Qué necesitas aprender o conocer para poder proteger mejor a tu familia y hacer de Internet un espacio más seguro?</li>
+            <li>P3: ¿Qué propones que haga tu gobierno, las escuelas, otros padres o madres de familia para proteger mejor a ninas, ninos y adolescentes en Internet?</li>
+          </ul>
+
+          <p><span class="newthought" id="dosene" style="border-bottom: solid;">2-enegrama</span>
+
+          <span class="newthought" id="tresene" style="margin-left: 50px;">3-enegrama   <label for="sn-in-his-later-books" class="margin-toggle sidenote-number"></label></span>
+
+          <input type="checkbox" id="sn-in-his-later-books" class="margin-toggle"><span class="sidenote">
+          	Las entradas menores a 7 matches fueron eliminadas en el caso de n=2 y 5 en el de n=3;
+          </span></input>
+          </p>
+
+          	<div id="wrapper" style="margin-left: -17%";>
+  			</div>
+  			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  			<script src="jquery.csv.js"></script>
+  			<script src="g1.js"></script>
+  			<script src="g2.js"></script>
+      <p>De este enegrama podemos observar que las redes sociales son un tema mencionado muy a menudo. Y también identificar palabras clave para ver cómo es que aparecen distribuidos en las 3 preguntas</p>
+
+      </section>
+         
+      <section>
+        
+         <p><span class="newthought" id="dosene" style="      ">Frecuencia de aparición de palabras clave</span>
+             <div id="g3" style="";>
+            <script src="g3.js"></script>
+      </section>
+      <section>
+        <p> Del anterior análisis podemos deducir que un tema que preocupa a las familias encuestadas en términos de seguridad en internet es el uso que se hace de las herramientas que proporciona este medio, en particular de las redes sociales. Las palabras clave "datos personales", "robo" e "identidad" aparecen en el mismo contexto (ver enegrama 3) por lo que podemos englobarlo en una preocupación general sobre la seguridad los datos personales en internet (incluyendo redes sociales) y las repercusiones que esto puede tener para el encuestado. </p>
+      </section>
+       <section>
+        <p> Puesto que la pregunta 3 exige una respuesta concreta es mejor ver una muestra al azar de dichas propuestas: </p>
+      </section>
+      
+
+      
+    </article>
+  
+
+</body>
+</html>
